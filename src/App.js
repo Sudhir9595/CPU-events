@@ -249,6 +249,13 @@ const GlobalStyles = () => (
     @media(max-width:580px){ .ce-grid{ grid-template-columns:1fr; } }
     .divider { border:none; border-top:1px solid var(--glass-border); margin:1.2rem 0; }
 
+    /* ── EDIT MODAL ── */
+    .edit-section-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin-bottom:.65rem; padding-bottom:.38rem; border-bottom:1px solid var(--glass-border); grid-column:1/-1; }
+    .btn-edit { background:rgba(58,141,222,.13); color:#6ab4f5; border:1px solid rgba(58,141,222,.27); }
+    .btn-edit:hover:not(:disabled) { background:rgba(58,141,222,.23); }
+    .input-changed { border-color:rgba(244,185,66,.55) !important; background:rgba(244,185,66,.06) !important; }
+    .change-badge { display:inline-block; margin-left:.5rem; font-size:.65rem; font-weight:700; background:rgba(244,185,66,.18); color:var(--gold); border:1px solid rgba(244,185,66,.3); border-radius:20px; padding:1px 7px; vertical-align:middle; }
+
     .toast-wrap { position:fixed; top:70px; right:1.2rem; z-index:300; display:flex; flex-direction:column; gap:.42rem; }
     .toast { padding:.68rem 1.1rem; border-radius:11px; font-size:.84rem; font-weight:500; min-width:245px; max-width:315px; border:1px solid; box-shadow:0 6px 20px rgba(0,0,0,.4); animation:fadeUp .3s ease; display:flex; align-items:center; gap:.52rem; }
     .t-success { background:rgba(46,201,126,.13); border-color:rgba(46,201,126,.3); color:var(--green); }
@@ -320,6 +327,7 @@ const PlusIco= () => <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
 const LogOut = () => <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1={21} y1={12} x2={9} y2={12}/></svg>;
 const UsrIco = () => <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx={9} cy={7} r={4}/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>;
 const TrshIco= () => <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>;
+const EditIco = () => <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
 const SearchIco = () => <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><circle cx={11} cy={11} r={8}/><path d="M21 21l-4.35-4.35"/></svg>;
 
 /* ── Toasts ── */
@@ -508,7 +516,7 @@ function Login({ onSwitch, onLogin, toast, users }) {
 
   const quickFill = (role) => {
     setEmail(role === "admin" ? "admin@college.edu" : "arjun@college.edu");
-    setPassword(role === "admin" ? "admin123" : "student123");
+    setPassword(role === "admin" ? "admin" : "student123");
     setErr("");
   };
 
@@ -523,14 +531,8 @@ function Login({ onSwitch, onLogin, toast, users }) {
         <h1 className="auth-heading fu">Welcome back</h1>
         <p className="auth-sub fu">Sign in to your campus account</p>
 
-        <button className="google-btn fu2" onClick={() => toast.info("Google sign-in coming soon!")}>
-          <div className="g-icon">G</div>
-          Continue with Google
-        </button>
-
-        <div className="or-div fu2">
-          <div className="or-line" /><span className="or-txt">or sign in with email</span><div className="or-line" />
-        </div>
+        
+       
 
         {err && <div className="err-box fi">⚠️ {err}</div>}
 
@@ -551,10 +553,7 @@ function Login({ onSwitch, onLogin, toast, users }) {
           </div>
         </div>
 
-        <div className="quick-btns fu3">
-          <button className="btn btn-ghost btn-sm btn-full" onClick={() => quickFill("student")}>👨‍🎓 Demo Student</button>
-          <button className="btn btn-ghost btn-sm btn-full" onClick={() => quickFill("admin")}>🔧 Demo Admin</button>
-        </div>
+        
 
         <button className="auth-btn fu4" onClick={submit} disabled={loading}>
           {loading ? <span className="spinner" style={{ width:18, height:18 }} /> : "Sign In →"}
@@ -567,9 +566,7 @@ function Login({ onSwitch, onLogin, toast, users }) {
         </p>
 
         <div className="demo-hint fu5">
-          <p>🔑 Demo credentials:</p>
-          <p>Student · arjun@college.edu / student123</p>
-          <p>Admin &nbsp;· admin@college.edu / admin123</p>
+         
         </div>
       </div>
     </div>
@@ -840,12 +837,191 @@ function RegsModal({ ev, onClose, users }) {
 }
 
 /* ════════════════════════════════════════
+   EDIT EVENT MODAL
+════════════════════════════════════════ */
+function EditEvModal({ ev, onClose, onSave, toast }) {
+  const [form, setForm] = useState({
+    title: ev.title,
+    cat:   ev.cat,
+    date:  ev.date,
+    time:  ev.time,
+    venue: ev.venue,
+    org:   ev.org,
+    cap:   ev.cap,
+    desc:  ev.desc,
+    pub:   ev.pub,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // track which fields changed from original
+  const changed = (k) => String(form[k]) !== String(ev[k]);
+
+  const changedCount = ["title","cat","date","time","venue","org","cap","desc"].filter(changed).length;
+
+  const validate = () => {
+    if (!form.title.trim()) return "Event title is required.";
+    if (!form.venue.trim()) return "Venue is required.";
+    if (!form.org.trim())   return "Organizer is required.";
+    if (!form.desc.trim())  return "Description is required.";
+    if (Number(form.cap) < ev.regs.length) return `Capacity cannot be less than current registrations (${ev.regs.length}).`;
+    if (Number(form.cap) < 1) return "Capacity must be at least 1.";
+    return "";
+  };
+
+  const submit = () => {
+    const err = validate();
+    if (err) { toast.error(err); return; }
+    setLoading(true);
+    setTimeout(() => {
+      onSave({ ...ev, ...form, cap: Number(form.cap) });
+      toast.success(`"${form.title}" updated successfully ✏️`);
+      onClose();
+    }, 600);
+  };
+
+  const inputCls = (k) => `form-input${changed(k) ? " input-changed" : ""}`;
+
+  return (
+    <div className="mo" onClick={onClose}>
+      <div className="mbox" style={{ maxWidth:620 }} onClick={e => e.stopPropagation()}>
+
+        {/* header */}
+        <div className="m-hdr">
+          <div>
+            <h2 className="m-title">
+              ✏️ Edit Event
+              {changedCount > 0 && <span className="change-badge">{changedCount} change{changedCount > 1 ? "s" : ""}</span>}
+            </h2>
+            <p style={{ fontSize:".8rem", color:"var(--text-muted)", marginTop:".15rem" }}>
+              Fields highlighted in <span style={{ color:"var(--gold)" }}>gold</span> have been modified
+            </p>
+          </div>
+          <button className="m-close" onClick={onClose}><XIcon /></button>
+        </div>
+
+        <div className="ce-grid">
+
+          {/* ── Basic Info ── */}
+          <div className="edit-section-title">📝 Basic Information</div>
+
+          <div className="form-group" style={{ gridColumn:"1/-1" }}>
+            <label className="form-label">Event Title *</label>
+            <input className={inputCls("title")} placeholder="Event title"
+              value={form.title} onChange={e => set("title", e.target.value)} />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Category</label>
+            <select className={inputCls("cat")} value={form.cat} onChange={e => set("cat", e.target.value)}>
+              {CATS.filter(c => c.id !== "all").map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Organizer *</label>
+            <input className={inputCls("org")} placeholder="e.g. CS Department"
+              value={form.org} onChange={e => set("org", e.target.value)} />
+          </div>
+
+          {/* ── Schedule ── */}
+          <div className="edit-section-title">📅 Schedule & Location</div>
+
+          <div className="form-group">
+            <label className="form-label">Date *</label>
+            <input type="date" className={inputCls("date")}
+              value={form.date} onChange={e => set("date", e.target.value)} />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Time *</label>
+            <input className={inputCls("time")} placeholder="e.g. 10:00 AM"
+              value={form.time} onChange={e => set("time", e.target.value)} />
+          </div>
+
+          <div className="form-group" style={{ gridColumn:"1/-1" }}>
+            <label className="form-label">Venue *</label>
+            <input className={inputCls("venue")} placeholder="e.g. Main Auditorium"
+              value={form.venue} onChange={e => set("venue", e.target.value)} />
+          </div>
+
+          {/* ── Capacity ── */}
+          <div className="edit-section-title">🎟️ Capacity</div>
+
+          <div className="form-group">
+            <label className="form-label">
+              Total Capacity *
+              {ev.regs.length > 0 && (
+                <span style={{ color:"var(--text-muted)", textTransform:"none", letterSpacing:0, fontWeight:400, marginLeft:".4rem" }}>
+                  (min: {ev.regs.length} — already registered)
+                </span>
+              )}
+            </label>
+            <input type="number" className={inputCls("cap")} min={ev.regs.length || 1} max={5000}
+              value={form.cap} onChange={e => set("cap", e.target.value)} />
+            {/* seats remaining preview */}
+            <div style={{ marginTop:".45rem", display:"flex", gap:"1rem" }}>
+              {[
+                ["Registered", ev.regs.length, "var(--green)"],
+                ["New Capacity", Number(form.cap) || 0, changed("cap") ? "var(--gold)" : "var(--text-primary)"],
+                ["Available After", Math.max(0, Number(form.cap) - ev.regs.length), Number(form.cap) - ev.regs.length < 0 ? "var(--red)" : "var(--cyan)"],
+              ].map(([l, v, c]) => (
+                <div key={l} style={{ flex:1, background:"rgba(255,255,255,.04)", border:"1px solid var(--glass-border)", borderRadius:8, padding:".5rem .7rem" }}>
+                  <div style={{ fontSize:".65rem", color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:".05em", marginBottom:".15rem" }}>{l}</div>
+                  <div style={{ fontSize:"1.1rem", fontWeight:700, color: c, fontFamily:"'Fraunces',serif" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Visibility</label>
+            <div style={{ display:"flex", alignItems:"center", gap:".65rem", padding:".7rem 1rem", background:"rgba(255,255,255,.04)", border:`1.5px solid ${form.pub ? "rgba(46,201,126,.3)" : "var(--glass-border)"}`, borderRadius:11, cursor:"pointer" }}
+              onClick={() => set("pub", !form.pub)}>
+              <input type="checkbox" checked={form.pub} onChange={e => set("pub", e.target.checked)}
+                style={{ accentColor:"var(--green)", width:16, height:16, cursor:"pointer" }} />
+              <div>
+                <div style={{ fontSize:".85rem", fontWeight:600 }}>{form.pub ? "Published" : "Draft"}</div>
+                <div style={{ fontSize:".72rem", color:"var(--text-muted)" }}>{form.pub ? "Visible to students" : "Hidden from students"}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Description ── */}
+          <div className="edit-section-title">📄 Description</div>
+
+          <div className="form-group" style={{ gridColumn:"1/-1" }}>
+            <label className="form-label">Description *</label>
+            <textarea className={inputCls("desc")} rows={3} placeholder="Event description…"
+              value={form.desc} onChange={e => set("desc", e.target.value)} />
+          </div>
+
+        </div>
+
+        <hr className="divider" />
+
+        <div style={{ display:"flex", gap:".62rem" }}>
+          <button className="btn btn-ghost btn-full" onClick={onClose}>Cancel</button>
+          <button className="btn btn-gold btn-full" onClick={submit} disabled={loading || changedCount === 0}
+            style={changedCount === 0 ? { opacity:.5, cursor:"not-allowed" } : {}}>
+            {loading ? "Saving…" : changedCount === 0 ? "No Changes" : `Save ${changedCount} Change${changedCount > 1 ? "s" : ""} →`}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
    ADMIN DASHBOARD
 ════════════════════════════════════════ */
 function AdminDash({ user, events, setEvents, users, toast }) {
   const [tab,    setTab]    = useState("events");
   const [showCr, setShowCr] = useState(false);
   const [regEv,  setRegEv]  = useState(null);
+  const [editEv, setEditEv] = useState(null);
   const [search, setSearch] = useState("");
 
   const totalReg = events.reduce((s, e) => s + e.regs.length, 0);
@@ -856,6 +1032,7 @@ function AdminDash({ user, events, setEvents, users, toast }) {
   const handleCreate    = f  => setEvents(evs => [...evs, { ...f, id: Date.now(), regs: [] }]);
   const handleDelete    = id => { setEvents(evs => evs.filter(e => e.id !== id)); toast.info("Event deleted."); };
   const handleTogglePub = id => setEvents(evs => evs.map(e => e.id === id ? { ...e, pub: !e.pub } : e));
+  const handleEdit      = updated => setEvents(evs => evs.map(e => e.id === updated.id ? updated : e));
 
   const filtered     = events.filter(e => e.title.toLowerCase().includes(search.toLowerCase()));
   const studentUsers = users.filter(u => u.role === "student");
@@ -908,6 +1085,7 @@ function AdminDash({ user, events, setEvents, users, toast }) {
                       <td><span className={`sbadge ${past?"sb-past":e.pub?"sb-pub":"sb-dft"}`}>{past?"Past":e.pub?"Published":"Draft"}</span></td>
                       <td>
                         <div style={{ display:"flex", gap:".32rem" }}>
+                          <button className="btn btn-edit btn-sm" onClick={() => setEditEv(e)}><EditIco /></button>
                           {!past && <button className={`btn btn-sm ${e.pub?"btn-ghost":"btn-success"}`} onClick={() => handleTogglePub(e.id)}>{e.pub?"Unpublish":"Publish"}</button>}
                           <button className="btn btn-danger btn-sm" onClick={() => handleDelete(e.id)}><TrshIco /></button>
                         </div>
@@ -950,6 +1128,7 @@ function AdminDash({ user, events, setEvents, users, toast }) {
 
       {showCr && <CreateEvModal onClose={() => setShowCr(false)} onCreate={handleCreate} toast={toast} />}
       {regEv  && <RegsModal ev={regEv} onClose={() => setRegEv(null)} users={users} />}
+      {editEv && <EditEvModal ev={editEv} onClose={() => setEditEv(null)} onSave={handleEdit} toast={toast} />}
     </>
   );
 }
